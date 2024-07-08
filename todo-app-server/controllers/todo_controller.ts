@@ -21,6 +21,12 @@ async function addTodo(req: Request, res: Response) {
     const documentId = addedDocument.id;
     console.log(documentId);
 
+    let documentReference = doc(FIRESTORE, "todo", documentId);
+    console.log(documentReference);
+    let fetchedDocument = await getDoc(documentReference);
+    console.log(`DocumentId: ${documentId} | typeof(documentId): ${typeof(documentId)}`)
+    console.log(fetchedDocument.data());
+
     let successResponse: ResponseMessage = {
       success: true,
       data: documentId ,
@@ -90,15 +96,17 @@ async function getTodoDetails(req: Request, res: Response): Promise<Response<any
   console.log("Fetching details for a todo.");
 
   try {
-    let todoId: string = req.params.todoId;
+    let todoId: string = req.params.todoId.trim();
 
-    console.log(todoId);
-    const documentReference = doc(DB.todo, todoId);
-    console.log(documentReference);
-    const fetchedDocument = await getDoc(documentReference);
-    console.log(fetchedDocument);
-    const todoDetails = fetchedDocument.data();
-    console.log(todoDetails, fetchedDocument);
+    let documentReference = doc(FIRESTORE, "todo", todoId);
+    let todoDetails: TodoModel | null = null;
+    let fetchedDocument = await getDoc(documentReference)
+    .then( snapshot => {
+        if (snapshot.exists()) {
+          todoDetails = snapshot.data() as unknown as TodoModel;
+        };
+      }
+    );
 
     let successResponse: ResponseMessage = {
       success: true,
