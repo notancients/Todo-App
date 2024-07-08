@@ -2,7 +2,9 @@ import { DB, FIRESTORE } from '../firebase/firestore';
 import { 
   collection, doc, addDoc, getDoc, getDocs, 
   limit, query, setDoc, DocumentReference, DocumentData, 
-  DocumentSnapshot
+  DocumentSnapshot,
+  documentId,
+  deleteDoc
 } from 'firebase/firestore';
 import { Request, Response } from 'express';
 import { TodoModel, toTodoModel } from '../models/todo_model';
@@ -181,6 +183,14 @@ async function deleteTodo(req: Request, res: Response): Promise<Response<any, Re
   console.log("Deleting a todo.");
   
   try {
+
+    const todoId: string = req.params.todoId.trim();
+    console.log(todoId);
+    let documentReference = doc(FIRESTORE, "todo", todoId);
+    const existingDocument: boolean = await getDoc(documentReference).then(snapshot => snapshot.exists());
+    if(existingDocument) {
+      await deleteDoc(documentReference);
+    }
 
     let successResponse: ResponseMessage = {
       success: true,
