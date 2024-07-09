@@ -4,7 +4,10 @@ import {
   limit, query, setDoc, DocumentReference, DocumentData, 
   DocumentSnapshot,
   documentId,
-  deleteDoc
+  deleteDoc,
+  where,
+  QueryFieldFilterConstraint,
+  Timestamp
 } from 'firebase/firestore';
 import { Request, Response } from 'express';
 import { TodoModel, toTodoModel } from '../models/todo_model';
@@ -58,9 +61,33 @@ async function getTodoByUser(req: Request, res: Response): Promise<Response<any,
     console.log("Fetching todo data.");
     
     try {
-      const page: number = req.params.page as unknown as number;
+      const userId = req.params.userId;
+      const pageSize = 10;
 
-      const getTodoQuery = query(DB.todo, limit(page));
+      let { tags, deadlineBefore, deadlineAfter, color } = req.query;
+      // filters
+      let queries: QueryFieldFilterConstraint[] = [];
+      if (tags) {
+        let parsedTags = Array.isArray(tags) ? tags : [tags];
+        console.log(parsedTags);
+        queries.push(where("tags", "array-contains-any", parsedTags));
+      }
+      if (deadlineBefore) {
+        let date = new Date(deadlineBefore as string);
+        let timestamp = Timestamp.fromDate(date);
+        queries.push( where("deadline", "<=", timestamp) );
+      }
+      if (deadlineAfter) {
+        let date = new Date(deadlineAfter as string);
+        let timestamp = Timestamp.fromDate(date);
+        queries.push( where("deadline", ">=", timestamp) );
+      }
+      if (color) queries.push( where("color", "==", color) );
+      // end of filters
+
+      console.log(queries);
+
+      const getTodoQuery = query(DB.todo, ...queries);
       const documentSnapshot = await getDocs(getTodoQuery);
       const todoData = documentSnapshot.docs.map(doc => {
         let todoData = doc.data();
