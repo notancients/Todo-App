@@ -7,7 +7,8 @@ import {
   deleteDoc,
   where,
   QueryFieldFilterConstraint,
-  Timestamp
+  Timestamp,
+  serverTimestamp
 } from 'firebase/firestore';
 import { Request, Response } from 'express';
 import { TodoModel, toTodoModel } from '../models/todo_model';
@@ -20,16 +21,19 @@ async function addTodo(req: Request, res: Response) {
   try {
     let todoData: TodoModel = req.body;
     todoData.is_completed = Boolean(req.body.is_completed);
+    todoData.deadline = Timestamp.fromDate(new Date(todoData.deadline as unknown as number))
+    todoData.created_at = Timestamp.fromDate(new Date());
+    todoData.updated_at = Timestamp.fromDate(new Date());
     // console.log(req);
-    console.log(req.body);
+    // console.log(req.body);
     const addedDocument = await addDoc(DB.todo, todoData);
     const documentId = addedDocument.id;
-    console.log(documentId);
+    // console.log(documentId);
 
     let documentReference = doc(FIRESTORE, "todo", documentId);
-    console.log(documentReference);
+    // console.log(documentReference);
     let fetchedDocument = await getDoc(documentReference);
-    console.log(`DocumentId: ${documentId} | typeof(documentId): ${typeof(documentId)}`)
+    // console.log(`DocumentId: ${documentId} | typeof(documentId): ${typeof(documentId)}`)
     console.log(fetchedDocument.data());
 
     let successResponse: ResponseMessage = {
@@ -170,6 +174,7 @@ async function editTodo(req: Request, res: Response): Promise<Response<any, Reco
 
     const documentId = req.params.todoId;
     const details: TodoModel = req.body as TodoModel;
+    details.updated_at = Timestamp.fromDate(new Date());
     details["is_completed"] = Boolean(req.body.is_completed) as boolean;
     console.log(typeof(details.is_completed));
     // console.log(typeof(req.body.is_completed as boolean));

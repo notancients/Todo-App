@@ -10,6 +10,8 @@ interface TodoModel {
     color: string;
     deadline: Timestamp | null;
     subtask: string[] | null;
+    created_at: Timestamp;
+    updated_at: Timestamp;
 }
 
 function toTodoModel(todo: TodoModel) {
