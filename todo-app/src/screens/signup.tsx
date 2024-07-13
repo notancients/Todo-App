@@ -1,0 +1,84 @@
+import { useState, useRef } from 'react';
+import { createUserEmailPassword } from '../firebase/firebase_auth';
+
+
+export default function Signup() {
+
+  let passwordRef = useRef("");
+  let emailRef = useRef("");
+  let firstNameRef = useRef("");
+  let lastNameRef = useRef("");
+  let birthdayRef = useRef("");
+
+  function InputLabel({text, htmlfor}: {text: string, htmlfor: string}) {
+    return(
+      <label htmlFor={htmlfor}>{`${text}`}</label>
+    )
+  };
+
+
+  function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    createUserEmailPassword(emailRef.current, passwordRef.current);
+    console.log(passwordRef.current);
+    console.log(emailRef.current);
+  }
+
+
+  return(
+  <>
+  <div className='flex items-center justify-center h-full w-full'>
+  <form 
+    className='flex flex-col bg-red-200'
+    onSubmit={handleSignUp}
+  >
+    <InputLabel htmlfor="signup-email" text="E-mail"/>
+    <input 
+      id='signup-email' 
+      type='email' 
+      placeholder='E-Mail'
+      onChange={(e)=>{emailRef.current = e.target.value}}
+      required
+    />
+
+    <InputLabel htmlfor="signup-password" text="Password"/>
+    <input 
+      id='signup-password' 
+      type='password' 
+      placeholder='Password'
+      onChange={(e)=>{passwordRef.current = e.target.value}}
+      required
+    />
+
+    <InputLabel htmlfor="signup-firstname" text="First Name"/>
+    <input 
+      id='signup-firstname' 
+      type='text' 
+      placeholder='First Name'
+      onChange={(e)=>{firstNameRef.current = e.target.value}}
+      required
+    />
+    
+    <InputLabel htmlfor="signup-lastname" text="Last Name"/>
+    <input 
+      id='signup-lastname' 
+      type='text' 
+      placeholder='Last Name'
+      onChange={(e)=>{lastNameRef.current = e.target.value}}
+      required
+    />
+    
+    <InputLabel htmlfor="signup-birthday" text="Birthday"/>
+    <input 
+      id='signup-birthday' 
+      type='date' 
+      placeholder='Birthday'
+      onChange={(e)=>{birthdayRef.current = e.target.value}}
+    />
+
+    <button type='submit'>Sign Up</button>
+  </form>
+  </div>
+  </>
+  )
+}

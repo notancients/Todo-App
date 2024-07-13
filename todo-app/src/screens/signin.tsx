@@ -1,9 +1,11 @@
 import { useRef, ChangeEvent } from 'react';
 import { createUserEmailPassword } from '../firebase/firebase_auth';
+import { useNavigate } from 'react-router-dom';
 
-function LoginSignup() {
+function Signin() {
   let usernameRef = useRef('');
   let passwordRef = useRef('');
+  let navigate = useNavigate();
 
   function handleTextChange(event: ChangeEvent<HTMLInputElement>, target: string) {
     
@@ -20,18 +22,15 @@ function LoginSignup() {
   function handleSignIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log("User signing in.");
-    createUserEmailPassword(usernameRef.current, passwordRef.current);
-    console.log(passwordRef.current);
-    console.log(usernameRef.current);
   }
 
   function handleSignUp() {
-
+    navigate('/signup');
   }
 
   return(
   <>
-  <div className='flex bg-red-200 justify-center items-center h-screen w-screen'>
+  <div className='flex bg-red-200 justify-center items-center h-full w-full'>
   <form onSubmit={(e) => handleSignIn(e)} className='flex items-center justify-center flex-col h-3/4 w-2/4 bg-yellow-400'>
     <div id="username" className='m-2 w-2/3 flex items-start justify-center flex-col'>
       <div>Username</div>
@@ -63,4 +62,4 @@ function LoginSignup() {
   )
 }
 
-export default LoginSignup;
+export default Signin;
