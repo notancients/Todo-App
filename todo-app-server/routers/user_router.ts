@@ -5,7 +5,7 @@ import multerUpload from "../utility/multer";
 
 const userRouter: Router = express.Router();
 
-userRouter.post("/add-user", multerUpload.array('files'), addUser);
+userRouter.post("/add-user/:userId", multerUpload.array('files'), addUser);
 userRouter.get("/get-user/:userId", getUserDetails)
 userRouter.patch('/edit-user/:userId', editUser);
 userRouter.delete("/delete-user/:userId", deleteUser);

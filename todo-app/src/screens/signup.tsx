@@ -25,9 +25,8 @@ export default function Signup() {
     if (newUser.success) {
       console.log(newUser);
       let createUser = await axios.post(
-        `${API_ADRESS}user/add-user`,
+        `${API_ADRESS}/user/add-user/${newUser.data}`,
         {
-          id: newUser.data,
           email: emailRef.current,
           firstName: firstNameRef.current,
           lastName: lastNameRef.current,

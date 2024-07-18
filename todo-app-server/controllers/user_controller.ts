@@ -1,7 +1,7 @@
 
 import UserModel from "../models/user_model";
 import { DB, FIRESTORE } from '../firebase/firestore';
-import { collection, doc, addDoc, getDoc, getDocs, limit, query, setDoc, where, DocumentReference, DocumentData } from 'firebase/firestore';
+import { collection, doc, addDoc, getDoc, getDocs, limit, query, setDoc, where, DocumentReference, DocumentData, Timestamp } from 'firebase/firestore';
 import { Request, Response } from 'express';
 import { ErrorDetails, ResponseMessage } from '../models/response_model';
 
@@ -10,9 +10,12 @@ async function addUser(req: Request, res: Response) {
   console.log("Adding a new user.");
   
   try {
-    console.log(req.body.id);
+    let userId = req.params.userId;
+    console.log(req.body.birthday);
+    console.log(userId);
     let userDetails = req.body;
-    let documentReference = doc(FIRESTORE, "user", req.body.id);
+    userDetails.birthday = Timestamp.fromDate(new Date(userDetails.birthday));
+    let documentReference = doc(FIRESTORE, "user", userId);
     let newUser = await setDoc(documentReference, userDetails);
 
     let successResponse: ResponseMessage = {
