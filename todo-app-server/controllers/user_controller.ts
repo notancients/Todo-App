@@ -10,6 +10,10 @@ async function addUser(req: Request, res: Response) {
   console.log("Adding a new user.");
   
   try {
+    console.log(req.body.id);
+    let userDetails = req.body;
+    let documentReference = doc(FIRESTORE, "user", req.body.id);
+    let newUser = await setDoc(documentReference, userDetails);
 
     let successResponse: ResponseMessage = {
       success: true,

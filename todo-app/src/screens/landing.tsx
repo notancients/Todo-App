@@ -7,7 +7,7 @@ function Landing() {
     const navigate = useNavigate();
 
     function handleLogin() {
-        navigate('/login');
+        navigate('/signin');
     }
 
     return(

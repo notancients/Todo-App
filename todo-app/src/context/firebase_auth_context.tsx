@@ -1,21 +1,23 @@
-// import { useState, useRef, createContext } from 'react';
+import { useState, useRef, createContext, useContext } from 'react';
 
 
-// const AuthContext = createContext({});
+const AuthContext = createContext({});
 
-// export default function AuthProvider({ children }) {
-//     const [currentUser, setCurrentUser] = useState();
-//     const [loading, setLoading] = useState(false);
+export const useAuth = () => useContext(AuthContext);
+
+export default function AuthProvider({ children }: { children: any }) {
+    const [currentUser, setCurrentUser] = useState();
+    const [loading, setLoading] = useState(false);
     
-//     const value = {
-//         currentUser
-//     }
+    const value = {
+        currentUser
+    }
 
 
-//     return(
-//     <>
-//     <AuthContext.Provider value={value}>
-//     </AuthContext.Provider>
-//     </>
-//     )
-// }
+    return(
+    <>
+    <AuthContext.Provider value={value}>
+    </AuthContext.Provider>
+    </>
+    )
+}

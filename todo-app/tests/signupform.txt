@@ -1,0 +1,4 @@
+document.getElementById("signup-email").value = "ryujinrobles@gmail.com";
+document.getElementById('signup-password').value = "123456789";
+document.getElementById('signup-firstname').value = "Erjoy";
+document.getElementById('signup-lastname').value = "Robles";

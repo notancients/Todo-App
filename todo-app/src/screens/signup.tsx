@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import { createUserEmailPassword } from '../firebase/firebase_auth';
+import axios from 'axios';
 
+const API_ADRESS = import.meta.env.VITE_API_ADDRESS;
 
 export default function Signup() {
 
@@ -17,11 +19,22 @@ export default function Signup() {
   };
 
 
-  function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    createUserEmailPassword(emailRef.current, passwordRef.current);
-    console.log(passwordRef.current);
-    console.log(emailRef.current);
+    let newUser = await createUserEmailPassword(emailRef.current, passwordRef.current)
+    if (newUser.success) {
+      console.log(newUser);
+      let createUser = await axios.post(
+        `${API_ADRESS}user/add-user`,
+        {
+          id: newUser.data,
+          email: emailRef.current,
+          firstName: firstNameRef.current,
+          lastName: lastNameRef.current,
+          birthday: birthdayRef.current
+        }
+      )
+    }
   }
 
 
