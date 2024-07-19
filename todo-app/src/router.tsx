@@ -3,6 +3,7 @@ import Homepage from "./screens/homepage";
 import Landing from "./screens/landing";
 import Signin from "./screens/signin";
 import Signup from "./screens/signup";
+import TodoList from "./screens/todolist";
 
 
 
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
         path: "homepage",
         element: <Homepage/>
     },
+    {
+        path: "todolist",
+        element: <TodoList/>
+    }
 ])
 
 export default router;
