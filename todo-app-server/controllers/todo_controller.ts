@@ -8,7 +8,8 @@ import {
   where,
   QueryFieldFilterConstraint,
   Timestamp,
-  serverTimestamp
+  serverTimestamp,
+  updateDoc
 } from 'firebase/firestore';
 import { Request, Response } from 'express';
 import { TodoModel, toTodoModel } from '../models/todo_model';
@@ -73,7 +74,6 @@ async function getTodoByUser(req: Request, res: Response): Promise<Response<any,
       let queries: QueryFieldFilterConstraint[] = [];
       if (tags) {
         let parsedTags = Array.isArray(tags) ? tags : [tags];
-        console.log(parsedTags);
         queries.push(where("tags", "array-contains-any", parsedTags));
       }
       if (deadlineBefore) {
@@ -89,7 +89,7 @@ async function getTodoByUser(req: Request, res: Response): Promise<Response<any,
       if (color) queries.push( where("color", "==", color) );
       // end of filters
 
-      console.log(queries);
+      // console.log(queries);
 
       const getTodoQuery = query(DB.todo, ...queries);
       const documentSnapshot = await getDocs(getTodoQuery);
@@ -252,10 +252,52 @@ async function deleteTodo(req: Request, res: Response): Promise<Response<any, Re
 }
 
 
+async function markAsDone(req: Request, res: Response): Promise<Response<any, Record<string, any>>> {
+  console.log("Marking todo as done.");
+
+  try {
+    
+    let todoId = req.params.todoId;
+    let is_completed = req.params.isCompleted === "true";
+    console.log(typeof(is_completed));
+
+    console.log(`TodoId: ${todoId} | isCompleted: ${is_completed}`);
+    let documentReference = doc(DB.todo, todoId);
+
+    let updatedDocument = await updateDoc(documentReference, {"is_completed": is_completed});
+    console.log(updatedDocument);
+
+    let successResponse: ResponseMessage = {
+      success: true,
+      data: null,
+      message: "Successfully marked todo as done."
+    }
+
+    return(res.status(200).json(successResponse));
+    
+  } catch (error) {
+    let errorDetails: ErrorDetails = {
+      route: "/todo/mark-done",
+      errorMessage: error
+    };
+
+    console.log(errorDetails);
+
+    let errorResponse: ResponseMessage = {
+      success: false,
+      data: null,
+      message: "Failed to mark todo as done."
+    }
+    return(res.status(500).json(errorResponse))
+  }
+}
+
+
 export {
     addTodo,
     getTodoByUser,
     editTodo,
     deleteTodo,
-    getTodoDetails
+    getTodoDetails,
+    markAsDone
 }
